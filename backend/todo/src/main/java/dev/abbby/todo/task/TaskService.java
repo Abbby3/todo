@@ -1,7 +1,10 @@
 package dev.abbby.todo.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @Service
@@ -19,19 +22,26 @@ public class TaskService {
     }
 
     public Task getTaskById(String id) {
-        return taskRepository.findById(id).get();
+        if (taskRepository.existsById(id)) {
+            return taskRepository.findById(id).get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
+        }
     }
 
     public Task updateTask(String id, Task updatedTask) {
         if (taskRepository.existsById(id)) {
-            updatedTask.setId(id);
             return taskRepository.save(updatedTask);
         } else {
-            throw new IllegalArgumentException("Task with ID " + id + " does not exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
         }
     }
 
     public void deleteTask(String id) {
-        taskRepository.deleteById(id);
+        if (taskRepository.existsById(id)) {
+            taskRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
+        }
     }
 }
