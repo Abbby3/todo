@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Madimi+One&display=swap");
+@import "./styles/global.scss";
+
+* {
+  font-family: "Madimi One", sans-serif;
+  @include txtShadow(white, black);
+  margin: 0;
+  padding: 0;
+}
+.todo {
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(white, $blu);
+  @include flex(column);
+  position: relative;
+  overflow-x: hidden;
+}

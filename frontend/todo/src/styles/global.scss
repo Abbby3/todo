@@ -1,0 +1,15 @@
+$pnk: #f5a9b8;
+$blu: #5bcefa;
+
+@mixin flex($direction) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@mixin txtShadow($text, $shadow) {
+  color: $text;
+  text-shadow: 0px 0px 3px $shadow, 0px 0px 3px $shadow, 0px 0px 3px $shadow;
+}
