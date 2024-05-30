@@ -1,32 +1,31 @@
 package dev.abbby.todo.task;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
 
 import java.util.Date;
 
-@Document(collection = "todo")
+@Entity
+@Table(name = "tasks")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Task {
 
     @Id
-    private String id;
-    private String taskName;
-    private String importance;
+    @GeneratedValue
+    private Integer id;
+    private String task;
     private boolean completed;
+    private String importance;
+    private Date created;
+    private Date edited;
     private Date calendar;
     private String repeats;
-    @CreatedDate
-    private Date created;
-    @LastModifiedDate
-    private Date edited;
+
 }
