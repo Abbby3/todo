@@ -1,0 +1,10 @@
+@import "../../styles/global.scss";
+
+.taskList{
+  @include flex(column);
+  background-color: white;
+  border: 5px solid $pnk;
+  border-radius: 40px;
+  padding: 30px;
+  gap: 5px;
+}

@@ -1,6 +1,5 @@
 const query = "http://localhost:8080/tasks";
 
-// createTask;
 export const createTask = async (taskData: object) => {
   const requestOptions: RequestInit = {
     method: "POST",
@@ -15,7 +14,6 @@ export const createTask = async (taskData: object) => {
   }
 };
 
-// getAllTasks;
 export const getAllTasks = async () => {
   const response = await fetch(query);
   if (response.ok) {
@@ -25,7 +23,6 @@ export const getAllTasks = async () => {
   }
 };
 
-// getTaskById;
 export const getTaskById = async (id: string) => {
   const newQuery = query + '/' + id;
   const response = await fetch(newQuery);
@@ -36,7 +33,6 @@ export const getTaskById = async (id: string) => {
   }
 }
 
-// updateTask;
 export const updateTask = async (id: string, updatedTaskData: object) => {
   const newQuery = query + '/' + id;
   const requestOptions: RequestInit = {
@@ -52,7 +48,6 @@ export const updateTask = async (id: string, updatedTaskData: object) => {
   }
 };
 
-// deleteTask;
 export const deleteTask = async (id: string) => {
   const newQuery = query + '/' + id;
   const requestOptions: RequestInit = {
