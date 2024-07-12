@@ -1,10 +1,21 @@
-@import "../../styles/global.scss";
-
 .taskForm {
-  @include flex(column);
-  background-color: $pnk;
-  border: 5px solid white;
-  border-radius: 40px;
-  padding: 30px;
-  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1vh;
+  margin-bottom: 1vh;
+  width: 100%;
+  border: 0.1vh solid black;
+  border-radius: 2vh;
+  padding: 2vh;
+  padding-bottom: 6vh;
+  margin-bottom:-5vh ;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1vh;
+  width: 100%;
 }

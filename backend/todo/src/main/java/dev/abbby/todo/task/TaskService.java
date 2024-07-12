@@ -1,51 +1,57 @@
 package dev.abbby.todo.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class TaskService {
-
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskRepository repo;
 
-    public Task createTask(Task task) {
-        task.setCreated(new Date());
-        return taskRepository.save(task);
+    public Task createTask(CreateTaskDTO data) {
+        Task newTask = new Task();
+        newTask.setTask(data.getTask().trim());
+        newTask.setCompleted(data.getCompleted());
+        newTask.setImportance(data.getImportance().trim());
+        newTask.setCreated(new Date());
+        return this.repo.save(newTask);
     }
 
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return this.repo.findAll();
     }
 
-    public Task getTaskById(Integer id) {
-        if (taskRepository.existsById(id)) {
-            return taskRepository.findById(id).get();
+    public Optional<Task> getTaskById(Long id) {
+        return this.repo.findById(id);
+    }
+
+    public Optional<Task> updateTask(Long id, UpdateTaskDTO data) {
+        Optional<Task> existingTask = this.getTaskById(id);
+        if (existingTask.isPresent()) {
+            Task task = existingTask.get();
+            task.setTask(data.getTask().trim());
+            task.setCompleted(data.isCompleted());
+            task.setImportance(data.getImportance().trim());
+            task.setEdited(new Date());
+            return Optional.of(this.repo.save(task));
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
+            return Optional.empty();
         }
     }
 
-    public Task updateTask(Integer id, Task updatedTask) {
-        if (taskRepository.existsById(id)) {
-            updatedTask.setId(id);
-            updatedTask.setEdited(new Date());
-            return taskRepository.save(updatedTask);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
+    public boolean deleteById(Long id) {
+        Optional<Task> request = this.getTaskById(id);
+        if (request.isEmpty()) {
+            return false;
         }
-    }
-
-    public void deleteTask(Integer id) {
-        if (taskRepository.existsById(id)) {
-            taskRepository.deleteById(id);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
-        }
+        this.repo.delete(request.get());
+        return true; 
     }
 }

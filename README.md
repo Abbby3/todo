@@ -1,43 +1,93 @@
-Todo App
+# Todo List
 
-## Summary
+===========
 
-Create a backend with Spring that can create, update, read and delete todos from a MySQL database. Along with this create a frontend application with React that interacts with this backend.
+## Snippets
 
-## Example UI
+![UI Example](UI.png)
 
-![UI Example](todo_app.png)
+## Description
 
-## Frontend MVP
+This project is a to-do list web application with a backend built using Spring Boot and Java, and a frontend developed with Vite React using TypeScript. The application allows users to manage tasks by providing functionalities to add, edit, complete, and delete to-do tasks stored in a MySQL database.
 
-- Ability to add, complete, delete and edit todos
-- Typescript & testing with React Test Library
-- All errors must be handled and passed on properly back to the user (toast notifications are a good way of doing this)
-- Must look polished, there is an example image attached to this spec and there are hundreds of examples of good looking todo apps online
+### Tech Stack
 
-## Backend MVP
+    -   Spring Boot
+    -   Java
+    -   MySQL
+    -   Vite React
+    -   Typescript
+    -   SCSS
 
-- All endpoints must be error handled such that they return the correct status codes and messages.
-- Implement a logging strategy for requests being processed (there are loads of recourse you can find via google to do this)
-  - Log4j
-- Use spring swagger to generate documentation for your API
+## Documentation
 
-## BONUSES
+    [Swagger API](http://localhost:8080/swagger-ui.html)
 
-- There are heaps of additional things you can do here
-  - Search
-  - Sort
-  - Filter
-  - Categories
-  - Sub tasks
-  - Progress bars
-  - Authentication
-  - Pagination
-- But don't start adding this stuff till you have a solid MVP
+## Build Steps
 
-## Due Date
+### Backend
 
-- There is no specified due date
-- It will be up to you to organise a time to share your project with a coach
-  - Our expectation is that this will occur in the first week of the post course period
-  - If that's not possible you need to organise an alternative time with a coach
+1.  Clone the repository.
+
+```shell
+git clone https://github.com/Abbby3/todo.git
+```
+
+2.  Navigate to the backend directory.
+
+```shell
+cd todo/backend/todo
+```
+
+3.  Copy the .env file and set the login info to your mysql database
+
+```shell
+cp .env.example .env
+```
+
+4.  Run the application.
+
+```shell
+mvn spring-boot:run
+```
+
+### Frontend
+
+1.  Navigate to the frontend directory in a separate terminal.
+
+```shell
+cd todo/frontend/todo
+```
+
+2.  Install dependencies.
+
+```shell
+npm install
+```
+
+3.  Start the development server.
+
+```shell
+npm run dev
+```
+
+## Features
+
+- Add, read, delete, and edit tasks.
+- Toast notifications for error handling.
+- Swagger documentation for API.
+- Logging for request processing.
+
+## Future Goals
+
+- Integrate Mock Service Worker for testing api calls.
+
+## Changelog
+
+### 1.1.0
+
+    -   Added testing with react-testing-library and vitest.
+    -   UI redesign.
+    -   Added toast notifications with react-toastify
+    -   Added logging with Log4j.
+    -   Integrated Swagger for API documentation.

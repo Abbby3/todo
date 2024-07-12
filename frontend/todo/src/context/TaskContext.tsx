@@ -1,17 +1,37 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getAllTasks } from "../services/TaskService";
+import { createContext, useEffect, useState } from "react";
+import { TaskType } from "../types/TaskType";
+import { getAllTasks } from "../services/task-services";
 
-export const TaskContext = createContext([]);
+interface TasksContextProps {
+  tasks: TaskType[];
+  refreshTasks: () => void;
+}
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTaskContext = () => useContext(TaskContext);
+const defaults: TasksContextProps = {
+  tasks: [],
+  refreshTasks: () => console.log("Refreshing tasks"),
+};
 
-export const TaskProvider = ({ children }: { children: ReactNode }) => {
-  const [tasks, setTasks] = useState([]);
+export const TasksContext = createContext<TasksContextProps>(defaults);
+
+interface TasksContextProviderProps {
+  children: React.ReactNode;
+}
+
+const TasksContextProvider = ({ children }: TasksContextProviderProps) => {
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  const refreshTasks = (): void => {
+    getAllTasks()
+      .then((data) => setTasks(data))
+      .catch((error) => console.error("Error fetching tasks:", error));
+  };
 
   useEffect(() => {
-    getAllTasks().then((data) => setTasks(data));
+    refreshTasks();
   }, []);
 
-  return <TaskContext.Provider value={tasks}>{children}</TaskContext.Provider>;
+  return <TasksContext.Provider value={{ tasks, refreshTasks }}>{children}</TasksContext.Provider>;
 };
+
+export default TasksContextProvider;

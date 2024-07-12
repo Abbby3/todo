@@ -1,88 +1,93 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { createTask, getTaskById, updateTask } from "../../services/TaskService";
+import { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { createTask, getTaskById, updateTask } from "../../services/task-services";
 import styles from "./TaskForm.module.scss";
+import { TaskType } from "../../types/TaskType";
+import { schema } from "./schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TasksContext } from "../../context/TaskContext";
 
-const TaskForm = ({ id }: { id: string | null }) => {
-  const [task, setTask] = useState({
+interface TaskFormProps {
+  id: number | null;
+  onClose: () => void;
+}
+
+const TaskForm = ({ id, onClose }: TaskFormProps) => {
+  const { refreshTasks } = useContext(TasksContext);
+
+  const defaultTask: TaskType = {
+    id: 0,
     task: "",
     completed: false,
-    importance: "medium",
-    calendar: "",
-    repeats: "",
+    importance: "low",
     created: null,
     edited: null,
+  };
+  const { handleSubmit, register, setValue } = useForm<TaskType>({
+    resolver: zodResolver(schema),
+    defaultValues: defaultTask,
   });
 
-  useEffect(() => {
-    if (id != null) {
-      getTaskById(id)
-        .then((res) => setTask(res))
-        .catch((e) => console.error(e));
-    }
-  }, [id]);
+  const [task, setTask] = useState<TaskType>(defaultTask);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (id != null) {
-      updateTask(id, task);
-    } else {
-      createTask(task);
+  useEffect(() => {
+    const fetchTask = async () => {
+      if (id !== null) {
+        try {
+          const fetchedTask = await getTaskById(id);
+          setTask(fetchedTask);
+          Object.keys(fetchedTask).forEach((key) => {
+            setValue(key as keyof TaskType, fetchedTask[key as keyof TaskType]);
+          });
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Unknown Error");
+        }
+      }
+    };
+
+    fetchTask();
+  }, [id, setValue]);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      if (id !== null) {
+        await updateTask(id, data);
+      } else {
+        const response = await createTask(data);
+        setTask(response);
+      }
+      refreshTasks();
+      onClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unknown Error");
     }
-  };
+  });
 
   return (
-    <form onSubmit={handleSubmit} className={styles.taskForm}>
-      <label>
-        Task:
-        <input
-          type="text"
-          name="task"
-          value={task.task}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setTask((prevState) => ({
-              ...prevState,
-              task: e.target.value,
-            }));
-          }}
-          required
-        />
-      </label>
+    <form onSubmit={onSubmit} className={styles.taskForm}>
+      <div className={styles.content}>
+        <label>
+          Task: <input type="text" {...register("task")} />
+        </label>
 
-      <label>
-        Importance:
-        <select
-          name="importance"
-          value={task.importance}
-          onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-            setTask((prevState) => ({
-              ...prevState,
-              importance: e.target.value,
-            }));
-          }}
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </label>
+        <label>
+          Importance:{" "}
+          <select {...register("importance")}>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
 
-      <label>
-        Completed:
-        <input
-          type="checkbox"
-          name="completed"
-          checked={task.completed}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setTask((prevState) => ({
-              ...prevState,
-              completed: e.target.checked,
-            }));
-          }}
-        />
-      </label>
+        <label>
+          Completed: <input type="checkbox" {...register("completed")} />
+        </label>
 
-      <p>Created: {task.created || "N/A"}</p>
-      <p>Edited: {task.edited || "N/A"}</p>
+        <p>Created: {task.created ? new Date(task.created).toLocaleString() : "N/A"}</p>
+        <p>Edited: {task.edited ? new Date(task.edited).toLocaleString() : "N/A"}</p>
+      </div>
+
       <button type="submit">Save</button>
     </form>
   );
